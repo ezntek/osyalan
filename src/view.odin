@@ -14,11 +14,7 @@ View :: struct {
 RING_CIRCLE_RADIUS :: 14
 RING_THICKNESS :: 4
 
-view_new_basic :: proc(x, y, sz: i32) -> View {
-	return view_new_pro(x, y, sz, 0.06)
-}
-
-view_new_pro :: proc(x, y, sz: i32, padding: f32) -> (v: View) {
+view_new :: proc(x, y, sz: i32, padding: f32 = 0.06) -> (v: View) {
 	v = {
 		x       = x,
 		y       = y,
@@ -26,11 +22,6 @@ view_new_pro :: proc(x, y, sz: i32, padding: f32) -> (v: View) {
 	}
 	view_update_size(&v, sz)
 	return v
-}
-
-view_new :: proc {
-	view_new_basic,
-	view_new_pro,
 }
 
 view_update_size :: proc(v: ^View, new_sz: i32) {

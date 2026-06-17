@@ -3,25 +3,53 @@ package simai
 import "core:mem"
 import "core:strings"
 
-Parser :: struct {}
-
 Chart :: struct {
-	title, artist: string,
-	designer:      Maybe(string),
-	demo_seek:     f32,
-	levels:        map[int]LevelData,
+	title, artist, designer: string,
+	demo_seek:               f32,
+	levels:                  map[int]LevelData,
 }
 
 chart_delete :: proc(c: ^Chart) {
+	delete(c.title)
+	delete(c.artist)
+	delete(c.designer)
+
+	defer delete(c.levels)
+	for _, lv in c.levels {
+		delete(lv.level)
+		delete(lv.designer)
+
+		defer delete(lv.bars)
+		for bar in lv.bars {
+			defer delete(bar.notes)
+			for group in bar.notes {
+				#partial switch itm in group {
+				case []Note:
+					delete(itm)
+				}
+			}
+		}
+	}
 }
 
 LevelData :: struct {
 	level:    string,
 	designer: string,
 	bpm:      f32,
+	bars:     #soa[]Bar,
 }
 
-NoteSet :: []Note
+Bar :: struct {
+	notes:     []NoteGroup,
+	divisions: u16,
+}
+
+NoteGroup :: union {
+	// EACH note
+	[]Note,
+	// just a note
+	Note,
+}
 
 Note :: union {
 	Tap,
@@ -69,6 +97,7 @@ NoteProperty :: enum (u8) {
 	Break,
 	Ex,
 	Firework,
+	StarTap,
 }
 
 NotePropertySet :: bit_set[NoteProperty]

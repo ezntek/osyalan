@@ -1,5 +1,6 @@
 package osyalan
 
+import "simai"
 import rl "vendor:raylib"
 
 TITLE :: "osyalan"
